@@ -1,7 +1,8 @@
+import { View, Text } from "react-native";
 export function Carga() {
   return (
-    <div className="loading" style={{ marginTop: "40px" }}>
-      Cargando...
-    </div>
+    <View style={{ marginTop: 40 }}>
+      <Text>Cargando...</Text>
+    </View>
   );
 }
