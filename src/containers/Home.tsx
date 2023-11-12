@@ -61,6 +61,7 @@ export default function Home() {
 const styles = StyleSheet.create({
   contenedorPrincipal: {
     paddingTop: 40,
+    paddingBottom: 78,
     paddingHorizontal: 10,
   },
   border: {
