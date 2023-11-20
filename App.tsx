@@ -1,6 +1,11 @@
-import { View, Text } from "react-native";
-import Home from "./src/containers/Home";
+import { NavigationContainer } from "@react-navigation/native";
+import StackNavigator from "./src/navigators/stack.navigator";
+import DrawerNavigator from "./src/navigators/drawer.navigator";
 
 export default function App() {
-  return <Home />;
+  return (
+    <NavigationContainer>
+      <DrawerNavigator />
+    </NavigationContainer>
+  );
 }
