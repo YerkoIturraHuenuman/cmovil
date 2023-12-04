@@ -7,6 +7,8 @@ import { faBolt, faRotate } from "@fortawesome/free-solid-svg-icons";
 import { useFocusEffect } from "@react-navigation/native";
 export default function CamaraScreen({ navigation }: any) {
   //------------------------SET GENERALES--------------------------
+  const [modalVisible, setModalVisible] = useState(false);
+
   const [type, setType] = useState(CameraType.back);
   const [flash, setFlash] = useState(FlashMode.off);
   const camaraRef = useRef<any>(null);
