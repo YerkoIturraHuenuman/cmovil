@@ -48,7 +48,10 @@ export default function Home({ navigation }: any) {
         </View>
       </View>
       <View style={styles.contenedorBotonesPrincipales}>
-        <TouchableOpacity onPress={handleCamara}>
+        <TouchableOpacity
+          onPress={handleCamara}
+          style={{ elevation: 20, shadowColor: "#000" }}
+        >
           <FontAwesomeIcon icon={faCirclePlus} size={60} color="#32b403" />
         </TouchableOpacity>
       </View>
