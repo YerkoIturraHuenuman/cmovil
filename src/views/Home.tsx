@@ -1,6 +1,15 @@
 import React, { useState, useEffect, useRef } from "react";
 
-import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Image,
+  Alert,
+  Modal,
+  Pressable,
+} from "react-native";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faCirclePlus, faLocationDot } from "@fortawesome/free-solid-svg-icons";
 
@@ -8,6 +17,7 @@ import { faCirclePlus, faLocationDot } from "@fortawesome/free-solid-svg-icons";
 
 export default function Home({ navigation }: any) {
   //------------------------SET GENERALES--------------------------
+  const [modalVisible, setModalVisible] = useState(false);
 
   //------------------------FUNCIONES PRINCIPALES--------------------------
   useEffect(
@@ -42,16 +52,43 @@ export default function Home({ navigation }: any) {
           <Text style={styles.textUbicacion}>
             C. Dr. Sotero del Rio 1241-1201, La Florida, Región Metropolitana
           </Text>
-          <TouchableOpacity style={styles.botonMapa}>
+          <TouchableOpacity
+            style={styles.botonMapa}
+            onPress={() => setModalVisible(true)}
+          >
             <Text style={{ color: "#fff", fontWeight: "bold" }}>Mapa</Text>
           </TouchableOpacity>
         </View>
       </View>
       <View style={styles.contenedorBotonesPrincipales}>
-        <TouchableOpacity onPress={handleCamara}>
+        <TouchableOpacity
+          onPress={handleCamara}
+          style={{ elevation: 20, shadowColor: "#000" }}
+        >
           <FontAwesomeIcon icon={faCirclePlus} size={60} color="#32b403" />
         </TouchableOpacity>
       </View>
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => {
+          Alert.alert("Modal has been closed.");
+          setModalVisible(!modalVisible);
+        }}
+      >
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+            <Text style={styles.modalText}>Hello World!</Text>
+            <Pressable
+              style={[styles.button, styles.buttonClose]}
+              onPress={() => setModalVisible(!modalVisible)}
+            >
+              <Text style={styles.textStyle}>Hide Modal</Text>
+            </Pressable>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
@@ -112,5 +149,50 @@ const styles = StyleSheet.create({
     right: 0,
     marginHorizontal: 10,
     marginBottom: 20,
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 22,
+    borderWidth: 2,
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 35,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+    borderWidth: 2,
+    width: "100%",
+    height: "100%",
+  },
+  button: {
+    borderRadius: 20,
+    padding: 10,
+    elevation: 2,
+  },
+  buttonOpen: {
+    backgroundColor: "#F194FF",
+  },
+  buttonClose: {
+    backgroundColor: "#2196F3",
+  },
+  textStyle: {
+    color: "white",
+    fontWeight: "bold",
+    textAlign: "center",
+  },
+  modalText: {
+    marginBottom: 15,
+    textAlign: "center",
   },
 });

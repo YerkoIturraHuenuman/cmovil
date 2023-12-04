@@ -1,12 +1,14 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Camera, CameraType, FlashMode } from "expo-camera";
-import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
+import { StyleSheet, Text, View, TouchableOpacity, Button } from "react-native";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faCircle } from "@fortawesome/free-regular-svg-icons";
 import { faBolt, faRotate } from "@fortawesome/free-solid-svg-icons";
 import { useFocusEffect } from "@react-navigation/native";
 export default function CamaraScreen({ navigation }: any) {
   //------------------------SET GENERALES--------------------------
+  const [modalVisible, setModalVisible] = useState(false);
+
   const [type, setType] = useState(CameraType.back);
   const [flash, setFlash] = useState(FlashMode.off);
   const camaraRef = useRef<any>(null);
@@ -25,12 +27,32 @@ export default function CamaraScreen({ navigation }: any) {
 
   //------------------------PROCESOS--------------------------
   useEffect(() => {
-    camaraRef.current.resumePreview();
+    if (!permission && camaraRef.current) {
+      camaraRef.current.resumePreview();
+    }
     console.log("recarga cam");
-    return () => {
-      // Lógica de limpieza si es necesario
-    };
   }, []);
+
+  if (!permission?.granted) {
+    console.log("no permiso");
+
+    return (
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          alignContent: "center",
+          paddingHorizontal: 30,
+          backgroundColor: "#000",
+        }}
+      >
+        <Text style={{ textAlign: "center", marginBottom: 10, color: "#fff" }}>
+          Se necesitan permisos para acceder a la camara
+        </Text>
+        <Button onPress={requestPermission} title="Dar Permisos" />
+      </View>
+    );
+  }
 
   return (
     <View style={styles.contenedorPrincipal}>
@@ -58,23 +80,21 @@ export default function CamaraScreen({ navigation }: any) {
 const styles = StyleSheet.create({
   contenedorPrincipal: {
     flex: 1,
-    borderWidth: 3,
     backgroundColor: "transparent",
   },
   footerBotonesCamara: {
-    borderWidth: 2,
     position: "absolute",
     bottom: 0,
     width: "100%",
     justifyContent: "center",
     flexDirection: "row",
     grow: 10,
-    marginBottom: 20,
+    marginBottom: 50,
     zIndex: 9999,
     alignItems: "center",
   },
   camara: {
-    backgroundColor: "#0000004f",
     flex: 1,
+    borderWidth: 2,
   },
 });
