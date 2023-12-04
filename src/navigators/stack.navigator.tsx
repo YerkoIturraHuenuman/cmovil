@@ -1,16 +1,83 @@
+import React from "react";
+import { Image, View, StyleSheet, Pressable } from "react-native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import HomeView from "../views/homeView";
-import AddressView from "../views/addressView";
-import Home from "../containers/Home";
-import PageProductos from "../containers/PageProducts";
+import Home from "../views/Home";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import { faChevronLeft } from "@fortawesome/free-solid-svg-icons";
+import { TouchableOpacity } from "react-native-gesture-handler";
+const Stack = createNativeStackNavigator();
+import { useNavigation } from "@react-navigation/native";
+import CamaraScreen from "../containers/CamaraScreen";
+import PrePost from "../containers/PrePost";
+
+export function LogoTitle() {
+  return (
+    <Image
+      style={{
+        width: 150,
+        height: 50,
+        objectFit: "contain",
+      }}
+      source={require("../../assets/bass/Bass.png")}
+    />
+  );
+}
 
 export default function StackNavigator() {
-  const Stack = createNativeStackNavigator();
+  const navigation = useNavigation();
 
   return (
-    <Stack.Navigator>
-      <Stack.Screen name="Home" component={Home} />
-      <Stack.Screen name="Address" component={PageProductos} />
+    <Stack.Navigator screenOptions={{ headerTransparent: true }}>
+      <Stack.Screen
+        name="Home"
+        component={Home}
+        options={{
+          header: () => (
+            <View
+              style={{
+                width: "100%",
+                alignItems: "center",
+                backgroundColor: "transparent",
+                top: 50,
+              }}
+            >
+              <LogoTitle />
+            </View>
+          ),
+        }}
+      />
+      <Stack.Screen
+        name="CamaraScreen"
+        component={CamaraScreen}
+        options={{
+          headerTitle: "",
+          headerTintColor: "#fff",
+          headerLeft: () => (
+            <Pressable onPress={() => navigation.goBack()}>
+              <FontAwesomeIcon icon={faChevronLeft} size={25} color="#fff" />
+            </Pressable>
+          ),
+        }}
+      />
+      <Stack.Screen name="PrePost" component={PrePost} />
     </Stack.Navigator>
   );
 }
+const styles = StyleSheet.create({
+  contenedorPrincipal: {
+    paddingTop: 40,
+    paddingBottom: 78,
+    paddingHorizontal: 10,
+  },
+  border: {
+    borderWidth: 1,
+    borderColor: "black",
+  },
+  borderBottom: {
+    borderWidth: 1,
+    borderColor: "#F1F1F1",
+  },
+  w100: {
+    width: "100%",
+  },
+});
