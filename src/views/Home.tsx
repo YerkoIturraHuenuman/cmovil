@@ -10,6 +10,9 @@ import {
   Modal,
   Pressable,
 } from "react-native";
+import MapView, { Marker, Callout } from "react-native-maps";
+import * as Location from "expo-location";
+
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faCirclePlus, faLocationDot } from "@fortawesome/free-solid-svg-icons";
 
@@ -18,19 +21,38 @@ import { faCirclePlus, faLocationDot } from "@fortawesome/free-solid-svg-icons";
 export default function Home({ navigation }: any) {
   //------------------------SET GENERALES--------------------------
   const [modalVisible, setModalVisible] = useState(false);
+  const [location, setLocation] = useState<any>(null);
+  const [address, setAdress] = useState<any>(null);
 
   //------------------------FUNCIONES PRINCIPALES--------------------------
   useEffect(
     () =>
-      navigation.addListener("focus", () => {
-        console.log("home");
-      }),
+      navigation.addListener(
+        "focus",
+        () => {
+          console.log("home");
+        },
+        (async () => {
+          let { status } = await Location.requestForegroundPermissionsAsync();
+          if (status !== "granted") {
+            return;
+          }
+
+          let location: any = await Location.getCurrentPositionAsync({});
+          let address = await Location.reverseGeocodeAsync(location.coords);
+          setAdress(
+            `${address[0].street} ${address[0].streetNumber}, ${address[0].city}, ${address[0].region}, ${address[0].country}`
+          );
+          setLocation(location);
+        })()
+      ),
     [, navigation]
   );
   //------------------------PROCESOS--------------------------
   const handleCamara = () => {
     navigation.navigate("CamaraScreen");
   };
+  console.log(address);
   return (
     <View style={styles.body}>
       <View style={styles.contenedorPrincipal}>
@@ -59,13 +81,20 @@ export default function Home({ navigation }: any) {
             <Text style={{ color: "#fff", fontWeight: "bold" }}>Mapa</Text>
           </TouchableOpacity>
         </View>
+        <Text
+          style={{
+            marginHorizontal: 20,
+            marginTop: 10,
+            color: "#777777",
+            fontSize: 12,
+          }}
+        >
+          Hace 2 horas
+        </Text>
       </View>
       <View style={styles.contenedorBotonesPrincipales}>
-        <TouchableOpacity
-          onPress={handleCamara}
-          style={{ elevation: 20, shadowColor: "#000" }}
-        >
-          <FontAwesomeIcon icon={faCirclePlus} size={60} color="#32b403" />
+        <TouchableOpacity onPress={handleCamara} style={styles.botonMas}>
+          <FontAwesomeIcon icon={faCirclePlus} size={60} color="#5bee00" />
         </TouchableOpacity>
       </View>
       <Modal
@@ -79,13 +108,40 @@ export default function Home({ navigation }: any) {
       >
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
-            <Text style={styles.modalText}>Hello World!</Text>
             <Pressable
               style={[styles.button, styles.buttonClose]}
               onPress={() => setModalVisible(!modalVisible)}
+            ></Pressable>
+            <MapView
+              region={
+                location && location.coords
+                  ? {
+                      latitude: location.coords.latitude,
+                      longitude: location.coords.longitude,
+                      latitudeDelta: 0.01,
+                      longitudeDelta: 0.01,
+                    }
+                  : undefined
+              }
+              style={styles.map}
             >
-              <Text style={styles.textStyle}>Hide Modal</Text>
-            </Pressable>
+              {location && (
+                <Marker
+                  coordinate={{
+                    latitude: location.coords.latitude,
+                    longitude: location.coords.longitude,
+                  }}
+                >
+                  <Callout tooltip style={{}}>
+                    <View style={{ maxWidth: 300 }}>
+                      <View style={styles.popperMarca}>
+                        <Text>{address}</Text>
+                      </View>
+                    </View>
+                  </Callout>
+                </Marker>
+              )}
+            </MapView>
           </View>
         </View>
       </Modal>
@@ -95,7 +151,7 @@ export default function Home({ navigation }: any) {
 
 const styles = StyleSheet.create({
   body: {
-    paddingTop: 120,
+    paddingTop: 110,
     paddingBottom: 78,
     backgroundColor: "#fff",
     flex: 1,
@@ -106,7 +162,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   headerPublicacion: {
-    paddingHorizontal: 10,
+    paddingHorizontal: 15,
     paddingTop: 20,
     flexDirection: "row",
     alignItems: "center",
@@ -128,7 +184,7 @@ const styles = StyleSheet.create({
     height: 400,
   },
   footerPublicacion: {
-    paddingHorizontal: 10,
+    paddingHorizontal: 15,
     marginTop: 20,
     flexDirection: "row",
     alignItems: "center",
@@ -147,21 +203,31 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: 0,
     right: 0,
-    marginHorizontal: 10,
+    marginHorizontal: 20,
     marginBottom: 20,
+  },
+  botonMas: {
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+    borderRadius: 50,
   },
   centeredView: {
     flex: 1,
-    justifyContent: "center",
+    justifyContent: "flex-end",
     alignItems: "center",
-    marginTop: 22,
-    borderWidth: 2,
   },
   modalView: {
-    margin: 20,
+    paddingVertical: 20,
+    paddingHorizontal: 10,
     backgroundColor: "white",
-    borderRadius: 20,
-    padding: 35,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
     alignItems: "center",
     shadowColor: "#000",
     shadowOffset: {
@@ -171,28 +237,32 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 4,
     elevation: 5,
-    borderWidth: 2,
     width: "100%",
-    height: "100%",
+    height: "90%",
   },
   button: {
     borderRadius: 20,
-    padding: 10,
     elevation: 2,
   },
   buttonOpen: {
     backgroundColor: "#F194FF",
   },
   buttonClose: {
-    backgroundColor: "#2196F3",
+    width: 200,
+    height: 10,
+    backgroundColor: "#f1f1f1",
   },
-  textStyle: {
-    color: "white",
-    fontWeight: "bold",
-    textAlign: "center",
+  map: {
+    flex: 1,
+    width: "100%",
+    marginTop: 20,
   },
-  modalText: {
-    marginBottom: 15,
-    textAlign: "center",
+  popperMarca: {
+    backgroundColor: "#fff",
+    padding: 10,
+    borderRadius: 5,
+    marginBottom: 10,
+    borderWidth: 1,
+    borderColor: "#d8d8d8",
   },
 });

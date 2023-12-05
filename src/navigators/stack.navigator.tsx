@@ -1,14 +1,14 @@
 import React from "react";
 import { Image, View, StyleSheet, Pressable } from "react-native";
+const Stack = createNativeStackNavigator();
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import Home from "../views/Home";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faChevronLeft } from "@fortawesome/free-solid-svg-icons";
-import { TouchableOpacity } from "react-native-gesture-handler";
-const Stack = createNativeStackNavigator();
 import { useNavigation } from "@react-navigation/native";
 import CamaraScreen from "../containers/CamaraScreen";
-import PrePost from "../containers/PrePost";
+import PrePost from "../views/PrePost";
+import Home from "../views/Home";
+import AuthScreen from "../screens/AuthScreen";
 
 export function LogoTitle() {
   return (
@@ -27,7 +27,18 @@ export default function StackNavigator() {
   const navigation = useNavigation();
 
   return (
-    <Stack.Navigator screenOptions={{ headerTransparent: true }}>
+    <Stack.Navigator
+      screenOptions={{
+        headerTransparent: true,
+      }}
+    >
+      <Stack.Screen
+        name="Auth"
+        component={AuthScreen}
+        options={{
+          headerTitle: "",
+        }}
+      />
       <Stack.Screen
         name="Home"
         component={Home}
@@ -38,7 +49,7 @@ export default function StackNavigator() {
                 width: "100%",
                 alignItems: "center",
                 backgroundColor: "transparent",
-                top: 50,
+                top: 30,
               }}
             >
               <LogoTitle />
@@ -59,7 +70,24 @@ export default function StackNavigator() {
           ),
         }}
       />
-      <Stack.Screen name="PrePost" component={PrePost} />
+      <Stack.Screen
+        name="PrePost"
+        component={PrePost}
+        options={{
+          header: () => (
+            <View
+              style={{
+                width: "100%",
+                alignItems: "center",
+                backgroundColor: "transparent",
+                top: 30,
+              }}
+            >
+              <LogoTitle />
+            </View>
+          ),
+        }}
+      />
     </Stack.Navigator>
   );
 }

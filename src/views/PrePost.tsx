@@ -7,15 +7,40 @@ import {
   Image,
   Pressable,
 } from "react-native";
+import * as Location from "expo-location";
+
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faLocationDot } from "@fortawesome/free-solid-svg-icons";
 
 import { useRoute } from "@react-navigation/native";
 export default function PrePost({ navigation }: any) {
   //------------------------SET GENERALES--------------------------
-
+  const [location, setLocation] = useState<any>(null);
+  const [address, setAdress] = useState<any>(null);
   //------------------------FUNCIONES PRINCIPALES--------------------------
+  useEffect(
+    () =>
+      navigation.addListener(
+        "focus",
+        () => {
+          console.log("home");
+        },
+        (async () => {
+          let { status } = await Location.requestForegroundPermissionsAsync();
+          if (status !== "granted") {
+            return;
+          }
 
+          let location: any = await Location.getCurrentPositionAsync({});
+          let address = await Location.reverseGeocodeAsync(location.coords);
+          setAdress(
+            `${address[0].street} ${address[0].streetNumber}, ${address[0].city}, ${address[0].region}, ${address[0].country}`
+          );
+          setLocation(location);
+        })()
+      ),
+    [, navigation]
+  );
   //------------------------PROCESOS--------------------------
   const route = useRoute();
   const image = (route.params as { uri?: string })?.uri;
@@ -26,9 +51,7 @@ export default function PrePost({ navigation }: any) {
         <View style={{}}>
           <FontAwesomeIcon icon={faLocationDot} size={20} color="#5bee00" />
         </View>
-        <Text style={styles.textUbicacion}>
-          C. Dr. Sotero del Rio 1241-1201, La Florida, Región Metropolitana
-        </Text>
+        <Text style={styles.textUbicacion}>{address}</Text>
       </View>
       <View style={styles.contenedorBotones}>
         <Pressable
@@ -80,25 +103,30 @@ const styles = StyleSheet.create({
   },
   contenedorBotones: {
     paddingHorizontal: 10,
-    justifyContent: "space-between",
     flexDirection: "row",
     position: "absolute",
     bottom: 0,
     width: "100%",
-    marginBottom: 40,
+    marginBottom: 10,
   },
   botonSubir: {
+    flex: 1,
     backgroundColor: "#5bee00",
     width: 110,
     paddingVertical: 15,
-    borderRadius: 7,
+    borderBottomRightRadius: 7,
+    borderTopRightRadius: 7,
+
     borderColor: "#5bee00",
+    borderWidth: 2,
   },
   botonCancelar: {
+    flex: 1,
+    borderBottomLeftRadius: 7,
+    borderTopLeftRadius: 7,
     backgroundColor: "transparent",
     width: 110,
     paddingVertical: 15,
-    borderRadius: 7,
     borderColor: "#5bee00",
     borderWidth: 2,
   },

@@ -2,7 +2,7 @@ import { createDrawerNavigator } from "@react-navigation/drawer";
 import { Image, View, StyleSheet, Pressable } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import CamaraScreen from "../containers/CamaraScreen";
-import PrePost from "../containers/PrePost";
+import PrePost from "../views/PrePost";
 import Home from "../views/Home";
 
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
